@@ -135,8 +135,8 @@ var InitProject = function (){
     var viewMatrix = new Float32Array(16);
     var projMatrix = new Float32Array(16);
     glMatrix.mat4.identity(worldMatrix);
-    glMatrix.mat4.identity(viewMatrix);
-    glMatrix.mat4.identity(projMatrix);
+    glMatrix.mat4.lookAt(viewMatrix, [0, 0, -5], [0, 0, 0], [0, 1, 0]);
+    glMatrix.mat4.perspective(projMatrix, 45 * (Math.PI / 180), canvas.width / canvas.height, 0.1, 1000.0);
 
     //Enviando as matrizes para o shader
     gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
@@ -144,7 +144,21 @@ var InitProject = function (){
     gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, projMatrix);
 
     //Loop de renderizacao (atualizacao da tela)
-    //por enquanto só desenha o triângulo
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    var identityMatrix = new Float32Array(16);
+    glMatrix.mat4.identity(identityMatrix);
+    var angle = 0;
+    var loop = function(){
+        angle = performance.now() / 1000 / 6 * 2 * Math.PI;
+        glMatrix.mat4.rotate(worldMatrix, identityMatrix, angle, [0, 1, 0]);
+        gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
+
+        gl.clearColor(0.75, 0.85, 0.8, 1.0);
+        gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
 
 }
