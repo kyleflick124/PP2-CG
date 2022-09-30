@@ -1,82 +1,222 @@
-var gl = '';
+function getCentroid(obj){
+    var point = [0,0,0];
+    // eixo x
+    for(var i = 0; i < obj.length/6; i++){
+        point[0] += obj[i*6];
+    }
+    point[0] /= (obj.length/6);
+    // eixo y
+    for(var i = 0; i < obj.length/6; i++){
+        point[1] += obj[i*6 + 1];
+    }
+    point[1] /= (obj.length/6);
+    // eixo z
+    for(var i = 0; i < obj.length/6; i++){
+        point[2] += obj[i*6 + 2];
+    }
+    point[2] /= (obj.length/6);
+    return point;
+}
+
+function matrixMul(a, b){
+    for(var i = 0; i < 4; i++){
+        for(var j = 0; j < 4; j++){
+            a[i*4 + j] = (a[i*4] * b[j]) + (a[i*4 + 1] * b[4 + j]) + (a[i*4 + 2] * b[8 + j]) + (a[i*4 + 3] * b[12 + j]);
+        }
+    }
+    return a;
+}
+
+function pointMul(point, matrix){
+    for(var i = 0; i < 4; i++){
+        point[i] = (matrix[i*4] * point[0]) + (matrix[i*4 + 1] * point[1]) + (matrix[i*4 + 2] * point[2]) + (matrix[i*4 + 3] * point[3]);
+    }
+    return point;
+}
+
+function createMatrix(type, transformX = null, transformY = null, transformZ = null, axisR = null, inverted = false){
+    var matrix = [
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1,
+    ];
+    const angleSin = inverted ? -0.14 : 0.14;
+    const angleCos = 0.99;
+    switch (type) {
+        case 't':
+            matrix[3] = transformX;
+            matrix[7] = transformY;
+            matrix[11] = transformZ;
+            break;
+        case 'r':
+            var tMatrix = [
+                1, 0, 0, transformX,
+                0, 1, 0, transformY,
+                0, 0, 1, transformZ,
+                0, 0, 0, 1,
+            ];
+            var sMatrix = [
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1,
+            ];
+            switch (axisR) {
+                case 'x':
+                    matrix[5] = angleCos;
+                    matrix[6] = -angleSin;
+                    matrix[9] = angleSin;
+                    matrix[10] = angleCos;
+                    sMatrix = [
+                        1, 0, 0, 0,
+                        0, 1.02, 0, 0,
+                        0, 0, 1.02, 0,
+                        0, 0, 0, 1,
+                    ];
+                    matrix = matrixMul(tMatrix, matrix);
+                    matrix = matrixMul(matrix, sMatrix);
+                    break;
+                case 'y':
+                    matrix[0] = angleCos;
+                    matrix[2] = angleSin;
+                    matrix[8] = -angleSin;
+                    matrix[10] = angleCos;
+                    sMatrix = [
+                        1.02, 0, 0, 0,
+                        0, 1, 0, 0,
+                        0, 0, 1.02, 0,
+                        0, 0, 0, 1,
+                    ];
+                    matrix = matrixMul(tMatrix, matrix);
+                    matrix = matrixMul(matrix, sMatrix);
+                    break;
+                case 'z':
+                    matrix[0] = angleCos;
+                    matrix[1] = -angleSin;
+                    matrix[4] = angleSin;
+                    matrix[5] = angleCos;
+                    sMatrix = [
+                        1.02, 0, 0, 0,
+                        0, 1.02, 0, 0,
+                        0, 0, 1, 0,
+                        0, 0, 0, 1,
+                    ];
+                    matrix = matrixMul(tMatrix, matrix);
+                    matrix = matrixMul(matrix, sMatrix);
+                    break;
+            }
+            tMatrix = [
+                1, 0, 0, -transformX,
+                0, 1, 0, -transformY,
+                0, 0, 1, -transformZ,
+                0, 0, 0, 1,
+            ];
+            matrix = matrixMul(matrix, tMatrix);
+            break;
+        case 's':
+            matrix[0] = transformX;
+            matrix[5] = transformY;
+            matrix[10] = transformZ;
+            break;
+        default:
+            break;
+    }
+    console.log(matrix);
+    return matrix;
+}
+
+function tranformObject(obj, matrix){
+    var point = [];
+    for(var i = 0; i < obj.length;){
+        point = [
+            obj[i], 
+            obj[i + 1], 
+            obj[i + 2], 
+            1
+        ];
+        console.log(point);
+        point = pointMul(point, matrix);
+        console.log(point);
+        obj[i] = point[0];
+        obj[i + 1] = point[1];
+        obj[i + 2] = point[2];
+        i += 6;
+    }
+    return obj;
+}
 
 //Criando buffer dos vertices
-    var boxVertices = 
-	[ // X, Y, Z           R, G, B
-		// Top
-		-1.0, 1.0, -1.0,   0.5, 0.5, 0.5,
-		-1.0, 1.0, 1.0,    0.5, 0.5, 0.5,
-		1.0, 1.0, 1.0,     0.5, 0.5, 0.5,
-		1.0, 1.0, -1.0,    0.5, 0.5, 0.5,
+var boxVertices = 
+[ // X, Y, Z           R, G, B
+    // Top
+    -1.0, 1.0, -1.0,   0.5, 0.5, 0.5,
+    -1.0, 1.0, 1.0,    0.5, 0.5, 0.5,
+    1.0, 1.0, 1.0,     0.5, 0.5, 0.5,
+    1.0, 1.0, -1.0,    0.5, 0.5, 0.5,
 
-		// Left
-		-1.0, 1.0, 1.0,    0.75, 0.25, 0.5,
-		-1.0, -1.0, 1.0,   0.75, 0.25, 0.5,
-		-1.0, -1.0, -1.0,  0.75, 0.25, 0.5,
-		-1.0, 1.0, -1.0,   0.75, 0.25, 0.5,
+    // Left
+    -1.0, 1.0, 1.0,    0.75, 0.25, 0.5,
+    -1.0, -1.0, 1.0,   0.75, 0.25, 0.5,
+    -1.0, -1.0, -1.0,  0.75, 0.25, 0.5,
+    -1.0, 1.0, -1.0,   0.75, 0.25, 0.5,
 
-		// Right
-		1.0, 1.0, 1.0,    0.25, 0.25, 0.75,
-		1.0, -1.0, 1.0,   0.25, 0.25, 0.75,
-		1.0, -1.0, -1.0,  0.25, 0.25, 0.75,
-		1.0, 1.0, -1.0,   0.25, 0.25, 0.75,
+    // Right
+    1.0, 1.0, 1.0,    0.25, 0.25, 0.75,
+    1.0, -1.0, 1.0,   0.25, 0.25, 0.75,
+    1.0, -1.0, -1.0,  0.25, 0.25, 0.75,
+    1.0, 1.0, -1.0,   0.25, 0.25, 0.75,
 
-		// Front
-		1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
-		1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
-		-1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
-		-1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
+    // Front
+    1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
+    1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
+    -1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
+    -1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
 
-		// Back
-		1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
-		1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
-		-1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
-		-1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
+    // Back
+    1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
+    1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
+    -1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
+    -1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
 
-		// Bottom
-		-1.0, -1.0, -1.0,   0.5, 0.5, 1.0,
-		-1.0, -1.0, 1.0,    0.5, 0.5, 1.0,
-		1.0, -1.0, 1.0,     0.5, 0.5, 1.0,
-		1.0, -1.0, -1.0,    0.5, 0.5, 1.0,
-	];
+    // Bottom
+    -1.0, -1.0, -1.0,   0.5, 0.5, 1.0,
+    -1.0, -1.0, 1.0,    0.5, 0.5, 1.0,
+    1.0, -1.0, 1.0,     0.5, 0.5, 1.0,
+    1.0, -1.0, -1.0,    0.5, 0.5, 1.0,
+];
 
-    var boxIndices =
-	[
-		// Top
-		0, 1, 2,
-		0, 2, 3,
+var boxIndices =
+[
+    // Top
+    0, 1, 2,
+    0, 2, 3,
 
-		// Left
-		5, 4, 6,
-		6, 4, 7,
+    // Left
+    5, 4, 6,
+    6, 4, 7,
 
-		// Right
-		8, 9, 10,
-		8, 10, 11,
+    // Right
+    8, 9, 10,
+    8, 10, 11,
 
-		// Front
-		13, 12, 14,
-		15, 14, 12,
+    // Front
+    13, 12, 14,
+    15, 14, 12,
 
-		// Back
-		16, 17, 18,
-		16, 18, 19,
+    // Back
+    16, 17, 18,
+    16, 18, 19,
 
-		// Bottom
-		21, 20, 22,
-		22, 20, 23
-	];
+    // Bottom
+    21, 20, 22,
+    22, 20, 23
+];
 
 var viewMatrix = new Float32Array(16);
 var worldMatrix = new Float32Array(16);
 var projMatrix = new Float32Array(16);
 var testMatrix = new Float32Array(16);
-
-var xRotationMatrix = new Float32Array(16);
-var yRotationMatrix = new Float32Array(16);
-
-var xTranslationMatrix = new Float32Array(16);
-var yTranslationMatrix = new Float32Array(16);
 
 var identityMatrix = new Float32Array(16);
 glMatrix.mat4.identity(identityMatrix);
@@ -85,16 +225,19 @@ var angle = Math.PI / 100;
 window.addEventListener('keypress', (event) => {
     if(event.key === '6') {
         // angle += Math.PI / 100;
-		glMatrix.mat4.rotate(xRotationMatrix, identityMatrix, angle, [0, 1, 0]);
-		glMatrix.mat4.mul(worldMatrix, xRotationMatrix, worldMatrix)
+        var centroid = getCentroid(boxVertices);
+		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y');
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '2') {
         // angle += Math.PI / 100;
-        glMatrix.mat4.rotate(yRotationMatrix, identityMatrix, angle, [1, 0, 0]);
-        glMatrix.mat4.mul(worldMatrix, yRotationMatrix, worldMatrix)
+        var centroid = getCentroid(boxVertices);
+		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x');
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '8') {
         // angle += Math.PI / 100;
-        glMatrix.mat4.rotate(yRotationMatrix, identityMatrix, angle, [-1, 0, 0]);
-        glMatrix.mat4.mul(worldMatrix, yRotationMatrix, worldMatrix)
+        var centroid = getCentroid(boxVertices);
+		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x', true);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '4') {
         // angle += Math.PI / 100;
         glMatrix.mat4.rotate(xRotationMatrix, identityMatrix, angle, [0, -1, 0]);
@@ -127,23 +270,23 @@ window.addEventListener('keypress', (event) => {
         // angle += Math.PI / 100;
 		glMatrix.mat4.identity(worldMatrix);
     }else if(event.key === 'w') {
-        glMatrix.mat4.translate(xTranslationMatrix, identityMatrix, [0, 0.1, 0]);
-        glMatrix.mat4.mul(worldMatrix, xTranslationMatrix, worldMatrix)
+        var tranformMatrix = createMatrix('t', 0, 0.1, 0, null);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === 'a') {
-        glMatrix.mat4.translate(xTranslationMatrix, identityMatrix, [-0.1, 0, 0]);
-        glMatrix.mat4.mul(worldMatrix, xTranslationMatrix, worldMatrix)
+        var tranformMatrix = createMatrix('t', -0.1, 0, 0, null);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === 's') {
-        glMatrix.mat4.translate(xTranslationMatrix, identityMatrix, [0, -0.1, 0]);
-        glMatrix.mat4.mul(worldMatrix, xTranslationMatrix, worldMatrix)
+        var tranformMatrix = createMatrix('t', 0, -0.1, 0, null);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === 'd') {
-        glMatrix.mat4.translate(xTranslationMatrix, identityMatrix, [0.1, 0, 0]);
-        glMatrix.mat4.mul(worldMatrix, xTranslationMatrix, worldMatrix)
+        var tranformMatrix = createMatrix('t', 0.1, 0, 0, null);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === 'q') {
-        glMatrix.mat4.translate(xTranslationMatrix, identityMatrix, [0, 0, -0.1]);
-        glMatrix.mat4.mul(worldMatrix, xTranslationMatrix, worldMatrix)
+        var tranformMatrix = createMatrix('t', 0, 0, -0.1, null);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === 'e') {
-        glMatrix.mat4.translate(xTranslationMatrix, identityMatrix, [0, 0, 0.1]);
-        glMatrix.mat4.mul(worldMatrix, xTranslationMatrix, worldMatrix)
+        var tranformMatrix = createMatrix('t', 0, 0, 0.1, null);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     } 
 })
 
@@ -182,7 +325,7 @@ var InitProject = function (){
     console.log("funcionou :)");
 
     var canvas = document.getElementById('main-canvas');
-    gl = canvas.getContext('webgl');
+    var gl = canvas.getContext('webgl2');
 
     if(!gl) {
         gl = canvas.getContext('experimental-webgl');
@@ -294,13 +437,9 @@ var InitProject = function (){
 
     //Loop de renderizacao (atualizacao da tela)
     var loop = function(){
-        // angle = 1000 / 6 * 2 * Math.PI;
-		// glMatrix.mat4.rotate(xRotationMatrix, identityMatrix, angle, [0, 1, 0]);
-		// glMatrix.mat4.rotate(yRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
-        // glMatrix.mat4.rotateY(viewMatrix, viewMatrix, angle * 10);
-		// glMatrix.mat4.mul(worldMatrix, xRotationMatrix, yRotationMatrix)
         gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices), gl.STATIC_DRAW);
         gl.clearColor(0.537, 0.812, 0.941, 1.0);
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
