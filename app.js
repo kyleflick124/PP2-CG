@@ -209,101 +209,56 @@ function tranformObject(obj, matrix){
     return obj;
 }
 
-//Criando buffer dos vertices
-var boxVertices = 
-[ // X, Y, Z           R, G, B
-    // Top
-    -1.0, 1.0, -1.0,   0.5, 0.5, 0.5,
-    -1.0, 1.0, 1.0,    0.5, 0.5, 0.5,
-    1.0, 1.0, 1.0,     0.5, 0.5, 0.5,
-    1.0, 1.0, -1.0,    0.5, 0.5, 0.5,
-
-    // Left
-    -1.0, 1.0, 1.0,    0.75, 0.25, 0.5,
-    -1.0, -1.0, 1.0,   0.75, 0.25, 0.5,
-    -1.0, -1.0, -1.0,  0.75, 0.25, 0.5,
-    -1.0, 1.0, -1.0,   0.75, 0.25, 0.5,
-
-    // Right
-    1.0, 1.0, 1.0,    0.25, 0.25, 0.75,
-    1.0, -1.0, 1.0,   0.25, 0.25, 0.75,
-    1.0, -1.0, -1.0,  0.25, 0.25, 0.75,
-    1.0, 1.0, -1.0,   0.25, 0.25, 0.75,
-
-    // Front
-    1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
-    1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
-    -1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
-    -1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
-
-    // Back
-    1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
-    1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
-    -1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
-    -1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
-
-    // Bottom
-    -1.0, -1.0, -1.0,   0.5, 0.5, 1.0,
-    -1.0, -1.0, 1.0,    0.5, 0.5, 1.0,
-    1.0, -1.0, 1.0,     0.5, 0.5, 1.0,
-    1.0, -1.0, -1.0,    0.5, 0.5, 1.0,
-];
-
-var boxIndices =
-[
-    // Top
-    0, 1, 2,
-    0, 2, 3,
-
-    // Left
-    5, 4, 6,
-    6, 4, 7,
-
-    // Right
-    8, 9, 10,
-    8, 10, 11,
-
-    // Front
-    13, 12, 14,
-    15, 14, 12,
-
-    // Back
-    16, 17, 18,
-    16, 18, 19,
-
-    // Bottom
-    21, 20, 22,
-    22, 20, 23
-];
-
-var pyramidVertices = 
+var objectsVertices = [
+    //Criando buffer dos vertices
+    ['boxVertices', 
     [ // X, Y, Z           R, G, B
-        //Ponto ABE
-        -0.5, 0.0, 0.0,    0.25, 0.25, 0.25, //A
-        0.0, 0.5, 0.0,    0.25, 0.25, 0.25, //B
-        0.5, 0.0, 0.0,    0.75, 0.75, 0.75, //C
-        0.0, -0.5, 0.0,    0.75, 0.75, 0.75, //D
-        0.0, 0.0, 0.5,    0.75, 0.75, 0.75, //E
+        // Top
+        -1.0, 1.0, -1.0,   0.5, 0.5, 0.5,
+        -1.0, 1.0, 1.0,    0.5, 0.5, 0.5,
+        1.0, 1.0, 1.0,     0.5, 0.5, 0.5,
+        1.0, 1.0, -1.0,    0.5, 0.5, 0.5,
+    
+        // Left
+        -1.0, 1.0, 1.0,    0.75, 0.25, 0.5,
+        -1.0, -1.0, 1.0,   0.75, 0.25, 0.5,
+        -1.0, -1.0, -1.0,  0.75, 0.25, 0.5,
+        -1.0, 1.0, -1.0,   0.75, 0.25, 0.5,
+    
+        // Right
+        1.0, 1.0, 1.0,    0.25, 0.25, 0.75,
+        1.0, -1.0, 1.0,   0.25, 0.25, 0.75,
+        1.0, -1.0, -1.0,  0.25, 0.25, 0.75,
+        1.0, 1.0, -1.0,   0.25, 0.25, 0.75,
+    
+        // Front
+        1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
+        1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
+        -1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
+        -1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
+    
+        // Back
+        1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
+        1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
+        -1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
+        -1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
+    
+        // Bottom
+        -1.0, -1.0, -1.0,   0.5, 0.5, 1.0,
+        -1.0, -1.0, 1.0,    0.5, 0.5, 1.0,
+        1.0, -1.0, 1.0,     0.5, 0.5, 1.0,
+        1.0, -1.0, -1.0,    0.5, 0.5, 1.0,
+    ]],
+    ['pyramidVertices',
+    [ // X, Y, Z           R, G, B
+        -1.5, 0.0, 0.0,    1.0, 0.0, 0.0,
+        0.0, 1.5, 0.0,    0.0, 1.0, 0.0,
+        1.5, 0.0, 0.0,    0.0, 0.0, 1.0,
+        0.0, -1.5, 0.0,    1.0, 1.0, 0.0,
+        0.0, 0.0, 3.0,    1.0, 1.0, 1.0,
 
-    ]
-
-    var pyramidIndices = 
-    [
-        //xPonto ABE
-        0,1,4,
-        //xPonto ADE
-        0,3,4,
-        //xPonto CDE
-        2,3,4,
-        //xPonto BCE
-        1,2,4,
-        //Ponto ACD
-        0,2,3,
-        //Ponto ABC
-        0,1,2
-    ]
-
-    var d20Vertices = 
+    ]],
+    ['d20Vertices', 
     [ // X, Y, Z           R, G, B
         1.2, 0.74, 0.0,    1.0, 0.0, 0.0,   //A 0
         1.2, -0.74, 0.0,   0.0, 0.0, 0.0,   //A' 1
@@ -319,10 +274,51 @@ var pyramidVertices =
         0.0, -1.2, 0.74,   0.0, 0.0, 0.0,   //C' 9
         0.0, -1.2, -0.74,  0.0, 0.0, 0.0,   //C'' 10
         0.0, 1.2, -0.74,   0.0, 0.0, 0.0,   //C''' 11
+    ]]];
 
-    ]
-
-    var d20Indices = 
+var objectsIndices = [
+    ['boxIndices',
+    [
+        // Top
+        0, 1, 2,
+        0, 2, 3,
+    
+        // Left
+        5, 4, 6,
+        6, 4, 7,
+    
+        // Right
+        8, 9, 10,
+        8, 10, 11,
+    
+        // Front
+        13, 12, 14,
+        15, 14, 12,
+    
+        // Back
+        16, 17, 18,
+        16, 18, 19,
+    
+        // Bottom
+        21, 20, 22,
+        22, 20, 23
+    ]],
+    ['pyramidIndices', 
+    [
+        //xPonto ABE
+        0,1,4,
+        //xPonto ADE
+        0,3,4,
+        //xPonto CDE
+        2,3,4,
+        //xPonto BCE
+        1,2,4,
+        //Ponto ACD
+        0,2,3,
+        //Ponto ABC
+        0,1,2
+    ]],
+    ['d20Indices', 
     [
         0,1,4, //AA'B
         0,1,7, //AA'B'''
@@ -348,12 +344,13 @@ var pyramidVertices =
         1,7,10, //A'B'''C''
         2,6,10, //A''B''C''
         3,6,11, //A'''B''C'''
+        ]]];
 
-    ]
+        console.table(objectsVertices);
+        console.table(objectsIndices);
 
-var tranformMatrix = createMatrix('t', -5, 2.5, 0, null);
-boxVertices = tranformObject(boxVertices, tranformMatrix);
-
+var currentObjectVertices = objectsVertices[0][1];
+var currentObjectIndexes = objectsIndices[0][1];
 var viewMatrix = new Float32Array(16);
 var worldMatrix = new Float32Array(16);
 var projMatrix = new Float32Array(16);
@@ -362,114 +359,79 @@ var testMatrix = new Float32Array(16);
 var identityMatrix = new Float32Array(16);
 glMatrix.mat4.identity(identityMatrix);
 
+var count = 1;
 window.addEventListener('keypress', (event) => {
     if(event.key === '6') {
-        var centroid = getCentroid(boxVertices);
+        var centroid = getCentroid(currentObjectVertices);
 		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y');
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '2') {
-        var centroid = getCentroid(boxVertices);
+        var centroid = getCentroid(currentObjectVertices);
 		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x');
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '8') {
-        var centroid = getCentroid(boxVertices);
+        var centroid = getCentroid(currentObjectVertices);
 		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x', true);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '4') {
-        var centroid = getCentroid(boxVertices);
+        var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y', true);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '7') {
-        var centroid = getCentroid(boxVertices);
+        var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x', true);
         var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y', true);
         var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '9') {
-        var centroid = getCentroid(boxVertices);
+        var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x', true);
         var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y');
         var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '1') {
-        var centroid = getCentroid(boxVertices);
+        var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x');
         var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y', true);
         var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '3') {
-        var centroid = getCentroid(boxVertices);
+        var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x');
         var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y');
         var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
-    }else if(event.key === '5') {
-		boxVertices = [ 
-            // X, Y, Z           R, G, B
-            // Top
-            -0.25, 0.25, -0.25,   0.5, 0.5, 0.5,
-            -0.25, 0.25, 0.25,    0.5, 0.5, 0.5,
-            0.25, 0.25, 0.25,     0.5, 0.5, 0.5,
-            0.25, 0.25, -0.25,    0.5, 0.5, 0.5,
-
-            // Left
-            -0.25, 0.25, 0.25,    0.75, 0.25, 0.5,
-            -0.25, -0.25, 0.25,   0.75, 0.25, 0.5,
-            -0.25, -0.25, -0.25,  0.75, 0.25, 0.5,
-            -0.25, 0.25, -0.25,   0.75, 0.25, 0.5,
-
-            // Right
-            0.25, 0.25, 0.25,    0.25, 0.25, 0.75,
-            0.25, -0.25, 0.25,   0.25, 0.25, 0.75,
-            0.25, -0.25, -0.25,  0.25, 0.25, 0.75,
-            0.25, 0.25, -0.25,   0.25, 0.25, 0.75,
-
-            // Front
-            0.25, 0.25, 0.25,    1.0, 0.0, 0.15,
-            0.25, -0.25, 0.25,    1.0, 0.0, 0.15,
-            -0.25, -0.25, 0.25,    1.0, 0.0, 0.15,
-            -0.25, 0.25, 0.25,    1.0, 0.0, 0.15,
-
-            // Back
-            0.25, 0.25, -0.25,    0.0, 1.0, 0.15,
-            0.25, -0.25, -0.25,    0.0, 1.0, 0.15,
-            -0.25, -0.25, -0.25,    0.0, 1.0, 0.15,
-            -0.25, 0.25, -0.25,    0.0, 1.0, 0.15,
-
-            // Bottom
-            -0.25, -0.25, -0.25,   0.5, 0.5,1.0,
-            -0.25, -0.25, 0.25,    0.5, 0.5, 1.0,
-            0.25, -0.25, 0.25,     0.5, 0.5, 1.0,
-            0.25, -0.25, -0.25,    0.5, 0.5, 1.0,
-        ];
-        var tranformMatrix = createMatrix('t', -5, 2.5, 0, null);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 'w') {
         var tranformMatrix = createMatrix('t', 0, 0.1, 0, null);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 'a') {
         var tranformMatrix = createMatrix('t', -0.1, 0, 0, null);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 's') {
         var tranformMatrix = createMatrix('t', 0, -0.1, 0, null);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 'd') {
         var tranformMatrix = createMatrix('t', 0.1, 0, 0, null);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 'q') {
         var tranformMatrix = createMatrix('t', 0, 0, -0.1, null);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 'e') {
         var tranformMatrix = createMatrix('t', 0, 0, 0.1, null);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '+') {
-        var centroid = getCentroid(boxVertices);
+        var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix = createMatrix('s', centroid[0], centroid[1], centroid[2], null, false);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '-') {
-        var centroid = getCentroid(boxVertices);
+        var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix = createMatrix('s', centroid[0], centroid[1], centroid[2], null, true);
-        boxVertices = tranformObject(boxVertices, tranformMatrix);
+        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+    }else if(event.keyCode === 13) {
+        console.log(count % 3);
+        currentObjectVertices = objectsVertices[count % 3][1];
+        currentObjectIndexes = objectsIndices[count % 3][1];
+        count++;
     }
 })
 
@@ -564,38 +526,6 @@ var InitProject = function (){
 		return;
 	}
 
-    var boxVertexBufferObject = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices), gl.STATIC_DRAW);
-
-    var boxIndexBufferObject = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(boxIndices), gl.STATIC_DRAW);
-
-    var positionAttribLocation = gl.getAttribLocation(program, "vertPosition");
-    var colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
-    gl.vertexAttribPointer(
-        positionAttribLocation, //Attribute location
-        3, //Number of elements per attribute
-        gl.FLOAT, //type of elements
-        gl.FALSE, //normalization
-        6 * Float32Array.BYTES_PER_ELEMENT, //Size of an individual vertex
-        0 //Offset from the beginning of a single vertex to this attribute
-    );
-
-    gl.vertexAttribPointer(
-        colorAttribLocation, //Attribute location
-        3, //Number of elements per attribute
-        gl.FLOAT, //type of elements
-        gl.FALSE, //normalization
-        6 * Float32Array.BYTES_PER_ELEMENT, //Size of an individual vertex
-        3 * Float32Array.BYTES_PER_ELEMENT //Offset from the beginning of a single vertex to this attribute
-    );
-
-    //Habilitar os atributos declarados
-    gl.enableVertexAttribArray(positionAttribLocation);
-    gl.enableVertexAttribArray(colorAttribLocation);
-
     //Define o programa a ser usado pelo shader
     gl.useProgram(program);
 
@@ -618,11 +548,43 @@ var InitProject = function (){
     var loop = function(){
         gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(boxVertices), gl.STATIC_DRAW);
+        var VertexBufferObject = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, VertexBufferObject);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currentObjectVertices), gl.STATIC_DRAW);
+
+        var IndexBufferObject = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, IndexBufferObject);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(currentObjectIndexes), gl.STATIC_DRAW);
+        
+        var positionAttribLocation = gl.getAttribLocation(program, "vertPosition");
+        var colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
+        gl.vertexAttribPointer(
+            positionAttribLocation, //Attribute location
+            3, //Number of elements per attribute
+            gl.FLOAT, //type of elements
+            gl.FALSE, //normalization
+            6 * Float32Array.BYTES_PER_ELEMENT, //Size of an individual vertex
+            0 //Offset from the beginning of a single vertex to this attribute
+        );
+
+        gl.vertexAttribPointer(
+            colorAttribLocation, //Attribute location
+            3, //Number of elements per attribute
+            gl.FLOAT, //type of elements
+            gl.FALSE, //normalization
+            6 * Float32Array.BYTES_PER_ELEMENT, //Size of an individual vertex
+            3 * Float32Array.BYTES_PER_ELEMENT //Offset from the beginning of a single vertex to this attribute
+        );
+
+        //Habilitar os atributos declarados
+        gl.enableVertexAttribArray(positionAttribLocation);
+        gl.enableVertexAttribArray(colorAttribLocation);
+    
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currentObjectVertices), gl.STATIC_DRAW);
         gl.clearColor(0.537, 0.812, 0.941, 1.0);
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
-        gl.drawElements(gl.TRIANGLES, boxIndices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, currentObjectIndexes.length, gl.UNSIGNED_SHORT, 0);
         requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
