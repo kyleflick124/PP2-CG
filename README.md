@@ -35,13 +35,12 @@ Além disso, ao usar o *numpad* (ou os números do teclado), podemos rotacionar 
 **2 : rotaciona o objeto para baixo, apenas no eixo Z** <br/>
 **3 : rotaciona o objeto para baixo e para a direita** <br/>
 **4 : rotaciona o objeto para a esquerda, apenas no eixo Y** <br/>
-
 **6 : rotaciona o objeto para a direita, apenas no eixo Y** <br/>
 **7 : rotaciona o objeto para cima e para a esquerda** <br/>
 **8 : rotaciona o objeto para cima, apenas no eixo Z** <br/>
 **9 : rotaciona o objeto para cima e para a direita** <br/>
 
-**Enter : troca o objeto sendo manipulado. <br/> Opções disponíveis: 1-Cubo, 2-Pirâmide, 3-Icosaedro** <br/>
+**Enter : troca o objeto sendo manipulado. <br/> Opções disponíveis: Cubo, Pirâmide, Icosaedro** <br/>
 
 ## Erros conhecidos e problemas de implementação:
 
