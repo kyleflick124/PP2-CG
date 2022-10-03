@@ -162,9 +162,28 @@ function createMatrix(type, transformX = null, transformY = null, transformZ = n
             matrix = matrixMul(matrix, tMatrix);
             break;
         case 's':
-            matrix[0] = transformX;
-            matrix[5] = transformY;
-            matrix[10] = transformZ;
+            var scaleRatio = inverted ? 0.95 : 1.05;
+            var tMatrix = new Float32Array(16);
+            tMatrix = [
+                1, 0, 0, transformX,
+                0, 1, 0, transformY,
+                0, 0, 1, transformZ,
+                0, 0, 0, 1,
+            ];
+            matrix = [
+                scaleRatio, 0, 0, 0,
+                0, scaleRatio, 0, 0,
+                0, 0, scaleRatio, 0,
+                0, 0, 0, 1,
+            ];
+            matrix = matrixMul(tMatrix, matrix);
+            tMatrix = [
+                1, 0, 0, -transformX,
+                0, 1, 0, -transformY,
+                0, 0, 1, -transformZ,
+                0, 0, 0, 1,
+            ];
+            matrix = matrixMul(matrix, tMatrix);
             break;
         default:
             break;
@@ -310,7 +329,46 @@ window.addEventListener('keypress', (event) => {
         var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
         boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '5') {
-		glMatrix.mat4.identity(worldMatrix);
+		boxVertices = [ 
+            // X, Y, Z           R, G, B
+            // Top
+            -0.25, 0.25, -0.25,   0.5, 0.5, 0.5,
+            -0.25, 0.25, 0.25,    0.5, 0.5, 0.5,
+            0.25, 0.25, 0.25,     0.5, 0.5, 0.5,
+            0.25, 0.25, -0.25,    0.5, 0.5, 0.5,
+
+            // Left
+            -0.25, 0.25, 0.25,    0.75, 0.25, 0.5,
+            -0.25, -0.25, 0.25,   0.75, 0.25, 0.5,
+            -0.25, -0.25, -0.25,  0.75, 0.25, 0.5,
+            -0.25, 0.25, -0.25,   0.75, 0.25, 0.5,
+
+            // Right
+            0.25, 0.25, 0.25,    0.25, 0.25, 0.75,
+            0.25, -0.25, 0.25,   0.25, 0.25, 0.75,
+            0.25, -0.25, -0.25,  0.25, 0.25, 0.75,
+            0.25, 0.25, -0.25,   0.25, 0.25, 0.75,
+
+            // Front
+            0.25, 0.25, 0.25,    1.0, 0.0, 0.15,
+            0.25, -0.25, 0.25,    1.0, 0.0, 0.15,
+            -0.25, -0.25, 0.25,    1.0, 0.0, 0.15,
+            -0.25, 0.25, 0.25,    1.0, 0.0, 0.15,
+
+            // Back
+            0.25, 0.25, -0.25,    0.0, 1.0, 0.15,
+            0.25, -0.25, -0.25,    0.0, 1.0, 0.15,
+            -0.25, -0.25, -0.25,    0.0, 1.0, 0.15,
+            -0.25, 0.25, -0.25,    0.0, 1.0, 0.15,
+
+            // Bottom
+            -0.25, -0.25, -0.25,   0.5, 0.5,1.0,
+            -0.25, -0.25, 0.25,    0.5, 0.5, 1.0,
+            0.25, -0.25, 0.25,     0.5, 0.5, 1.0,
+            0.25, -0.25, -0.25,    0.5, 0.5, 1.0,
+        ];
+        var tranformMatrix = createMatrix('t', -5, 2.5, 0, null);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === 'w') {
         var tranformMatrix = createMatrix('t', 0, 0.1, 0, null);
         boxVertices = tranformObject(boxVertices, tranformMatrix);
@@ -329,7 +387,15 @@ window.addEventListener('keypress', (event) => {
     }else if(event.key === 'e') {
         var tranformMatrix = createMatrix('t', 0, 0, 0.1, null);
         boxVertices = tranformObject(boxVertices, tranformMatrix);
-    } 
+    }else if(event.key === '+') {
+        var centroid = getCentroid(boxVertices);
+        var tranformMatrix = createMatrix('s', centroid[0], centroid[1], centroid[2], null, false);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
+    }else if(event.key === '-') {
+        var centroid = getCentroid(boxVertices);
+        var tranformMatrix = createMatrix('s', centroid[0], centroid[1], centroid[2], null, true);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
+    }
 })
 
 //Declarando os shaders em formato de string
