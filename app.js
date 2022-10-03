@@ -19,30 +19,97 @@ function getCentroid(obj){
 }
 
 function matrixMul(a, b){
-    for(var i = 0; i < 4; i++){
-        for(var j = 0; j < 4; j++){
-            a[i*4 + j] = (a[i*4] * b[j]) + (a[i*4 + 1] * b[4 + j]) + (a[i*4 + 2] * b[8 + j]) + (a[i*4 + 3] * b[12 + j]);
-        }
-    }
-    return a;
+    var a00 = a[0 * 4 + 0];
+    var a01 = a[0 * 4 + 1];
+    var a02 = a[0 * 4 + 2];
+    var a03 = a[0 * 4 + 3];
+    var a10 = a[1 * 4 + 0];
+    var a11 = a[1 * 4 + 1];
+    var a12 = a[1 * 4 + 2];
+    var a13 = a[1 * 4 + 3];
+    var a20 = a[2 * 4 + 0];
+    var a21 = a[2 * 4 + 1];
+    var a22 = a[2 * 4 + 2];
+    var a23 = a[2 * 4 + 3];
+    var a30 = a[3 * 4 + 0];
+    var a31 = a[3 * 4 + 1];
+    var a32 = a[3 * 4 + 2];
+    var a33 = a[3 * 4 + 3];
+    var b00 = b[0 * 4 + 0];
+    var b01 = b[0 * 4 + 1];
+    var b02 = b[0 * 4 + 2];
+    var b03 = b[0 * 4 + 3];
+    var b10 = b[1 * 4 + 0];
+    var b11 = b[1 * 4 + 1];
+    var b12 = b[1 * 4 + 2];
+    var b13 = b[1 * 4 + 3];
+    var b20 = b[2 * 4 + 0];
+    var b21 = b[2 * 4 + 1];
+    var b22 = b[2 * 4 + 2];
+    var b23 = b[2 * 4 + 3];
+    var b30 = b[3 * 4 + 0];
+    var b31 = b[3 * 4 + 1];
+    var b32 = b[3 * 4 + 2];
+    var b33 = b[3 * 4 + 3];
+    return [
+      a00 * b00 + a01 * b10 + a02 * b20 + a03 * b30,
+      a00 * b01 + a01 * b11 + a02 * b21 + a03 * b31,
+      a00 * b02 + a01 * b12 + a02 * b22 + a03 * b32,
+      a00 * b03 + a01 * b13 + a02 * b23 + a03 * b33,
+      a10 * b00 + a11 * b10 + a12 * b20 + a13 * b30,
+      a10 * b01 + a11 * b11 + a12 * b21 + a13 * b31,
+      a10 * b02 + a11 * b12 + a12 * b22 + a13 * b32,
+      a10 * b03 + a11 * b13 + a12 * b23 + a13 * b33,
+      a20 * b00 + a21 * b10 + a22 * b20 + a23 * b30,
+      a20 * b01 + a21 * b11 + a22 * b21 + a23 * b31,
+      a20 * b02 + a21 * b12 + a22 * b22 + a23 * b32,
+      a20 * b03 + a21 * b13 + a22 * b23 + a23 * b33,
+      a30 * b00 + a31 * b10 + a32 * b20 + a33 * b30,
+      a30 * b01 + a31 * b11 + a32 * b21 + a33 * b31,
+      a30 * b02 + a31 * b12 + a32 * b22 + a33 * b32,
+      a30 * b03 + a31 * b13 + a32 * b23 + a33 * b33,
+    ];
 }
 
 function pointMul(point, matrix){
-    for(var i = 0; i < 4; i++){
-        point[i] = (matrix[i*4] * point[0]) + (matrix[i*4 + 1] * point[1]) + (matrix[i*4 + 2] * point[2]) + (matrix[i*4 + 3] * point[3]);
-    }
-    return point;
+    var m00 = matrix[0 * 4 + 0];
+    var m01 = matrix[0 * 4 + 1];
+    var m02 = matrix[0 * 4 + 2];
+    var m03 = matrix[0 * 4 + 3];
+    var m10 = matrix[1 * 4 + 0];
+    var m11 = matrix[1 * 4 + 1];
+    var m12 = matrix[1 * 4 + 2];
+    var m13 = matrix[1 * 4 + 3];
+    var m20 = matrix[2 * 4 + 0];
+    var m21 = matrix[2 * 4 + 1];
+    var m22 = matrix[2 * 4 + 2];
+    var m23 = matrix[2 * 4 + 3];
+    var m30 = matrix[3 * 4 + 0];
+    var m31 = matrix[3 * 4 + 1];
+    var m32 = matrix[3 * 4 + 2];
+    var m33 = matrix[3 * 4 + 3];
+    return [
+        m00 * point[0] + m01 * point[1] + m02 * point[2] + m03 * point[3],
+        m10 * point[0] + m11 * point[1] + m12 * point[2] + m13 * point[3],
+        m20 * point[0] + m21 * point[1] + m22 * point[2] + m23 * point[3],
+        m30 * point[0] + m31 * point[1] + m32 * point[2] + m33 * point[3],
+    ];
 }
 
 function createMatrix(type, transformX = null, transformY = null, transformZ = null, axisR = null, inverted = false){
-    var matrix = [
+    var matrix = new Float32Array(16);
+    matrix = [
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1,
     ];
-    const angleSin = inverted ? -0.14 : 0.14;
-    const angleCos = 0.99;
+    var angleSin = new Float32Array(1);
+    var angleCos = new Float32Array(1);
+    var radians = 5 * Math.PI/180;
+    angleSin[0] = inverted ? -(Math.sin(radians)) : Math.sin(radians);;
+    angleCos[0] = Math.cos(radians);;
+    console.log(angleCos[0], angleSin[0]);
     switch (type) {
         case 't':
             matrix[3] = transformX;
@@ -50,60 +117,40 @@ function createMatrix(type, transformX = null, transformY = null, transformZ = n
             matrix[11] = transformZ;
             break;
         case 'r':
-            var tMatrix = [
+            var tMatrix = new Float32Array(16);
+            tMatrix = [
                 1, 0, 0, transformX,
                 0, 1, 0, transformY,
                 0, 0, 1, transformZ,
                 0, 0, 0, 1,
             ];
-            var sMatrix = [
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1,
-            ];
             switch (axisR) {
                 case 'x':
-                    matrix[5] = angleCos;
-                    matrix[6] = -angleSin;
-                    matrix[9] = angleSin;
-                    matrix[10] = angleCos;
-                    sMatrix = [
-                        1, 0, 0, 0,
-                        0, 1.02, 0, 0,
-                        0, 0, 1.02, 0,
-                        0, 0, 0, 1,
+                    matrix = [
+                        1, 0            , 0             , 0,
+                        0, angleCos[0]  , -angleSin[0]  , 0,
+                        0, angleSin[0]  , angleCos[0]   , 0,
+                        0, 0            , 0             , 1,
                     ];
                     matrix = matrixMul(tMatrix, matrix);
-                    matrix = matrixMul(matrix, sMatrix);
                     break;
                 case 'y':
-                    matrix[0] = angleCos;
-                    matrix[2] = angleSin;
-                    matrix[8] = -angleSin;
-                    matrix[10] = angleCos;
-                    sMatrix = [
-                        1.02, 0, 0, 0,
-                        0, 1, 0, 0,
-                        0, 0, 1.02, 0,
-                        0, 0, 0, 1,
+                    matrix = [
+                        angleCos[0] , 0, angleSin[0], 0,
+                        0           , 1, 0          , 0,
+                        -angleSin[0], 0, angleCos[0], 0,
+                        0           , 0, 0          , 1,
                     ];
                     matrix = matrixMul(tMatrix, matrix);
-                    matrix = matrixMul(matrix, sMatrix);
                     break;
                 case 'z':
-                    matrix[0] = angleCos;
-                    matrix[1] = -angleSin;
-                    matrix[4] = angleSin;
-                    matrix[5] = angleCos;
-                    sMatrix = [
-                        1.02, 0, 0, 0,
-                        0, 1.02, 0, 0,
-                        0, 0, 1, 0,
-                        0, 0, 0, 1,
+                    matrix = [
+                        angleCos[0] , -angleSin[0]  , 0, 0,
+                        angleSin[0] , angleCos[0]   , 0, 0,
+                        0           , 0             , 1, 0,
+                        0           , 0             , 0, 1,
                     ];
                     matrix = matrixMul(tMatrix, matrix);
-                    matrix = matrixMul(matrix, sMatrix);
                     break;
             }
             tMatrix = [
@@ -115,14 +162,32 @@ function createMatrix(type, transformX = null, transformY = null, transformZ = n
             matrix = matrixMul(matrix, tMatrix);
             break;
         case 's':
-            matrix[0] = transformX;
-            matrix[5] = transformY;
-            matrix[10] = transformZ;
+            var scaleRatio = inverted ? 0.95 : 1.05;
+            var tMatrix = new Float32Array(16);
+            tMatrix = [
+                1, 0, 0, transformX,
+                0, 1, 0, transformY,
+                0, 0, 1, transformZ,
+                0, 0, 0, 1,
+            ];
+            matrix = [
+                scaleRatio, 0, 0, 0,
+                0, scaleRatio, 0, 0,
+                0, 0, scaleRatio, 0,
+                0, 0, 0, 1,
+            ];
+            matrix = matrixMul(tMatrix, matrix);
+            tMatrix = [
+                1, 0, 0, -transformX,
+                0, 1, 0, -transformY,
+                0, 0, 1, -transformZ,
+                0, 0, 0, 1,
+            ];
+            matrix = matrixMul(matrix, tMatrix);
             break;
         default:
             break;
     }
-    console.log(matrix);
     return matrix;
 }
 
@@ -135,9 +200,7 @@ function tranformObject(obj, matrix){
             obj[i + 2], 
             1
         ];
-        console.log(point);
         point = pointMul(point, matrix);
-        console.log(point);
         obj[i] = point[0];
         obj[i + 1] = point[1];
         obj[i + 2] = point[2];
@@ -147,43 +210,43 @@ function tranformObject(obj, matrix){
 }
 
 //Criando buffer dos vertices
-var boxVertices = 
-[ // X, Y, Z           R, G, B
+var boxVertices = [ 
+    // X, Y, Z           R, G, B
     // Top
-    -1.0, 1.0, -1.0,   0.5, 0.5, 0.5,
-    -1.0, 1.0, 1.0,    0.5, 0.5, 0.5,
-    1.0, 1.0, 1.0,     0.5, 0.5, 0.5,
-    1.0, 1.0, -1.0,    0.5, 0.5, 0.5,
+    -0.25, 0.25, -0.25,   0.5, 0.5, 0.5,
+    -0.25, 0.25, 0.25,    0.5, 0.5, 0.5,
+    0.25, 0.25, 0.25,     0.5, 0.5, 0.5,
+    0.25, 0.25, -0.25,    0.5, 0.5, 0.5,
 
     // Left
-    -1.0, 1.0, 1.0,    0.75, 0.25, 0.5,
-    -1.0, -1.0, 1.0,   0.75, 0.25, 0.5,
-    -1.0, -1.0, -1.0,  0.75, 0.25, 0.5,
-    -1.0, 1.0, -1.0,   0.75, 0.25, 0.5,
+    -0.25, 0.25, 0.25,    0.75, 0.25, 0.5,
+    -0.25, -0.25, 0.25,   0.75, 0.25, 0.5,
+    -0.25, -0.25, -0.25,  0.75, 0.25, 0.5,
+    -0.25, 0.25, -0.25,   0.75, 0.25, 0.5,
 
     // Right
-    1.0, 1.0, 1.0,    0.25, 0.25, 0.75,
-    1.0, -1.0, 1.0,   0.25, 0.25, 0.75,
-    1.0, -1.0, -1.0,  0.25, 0.25, 0.75,
-    1.0, 1.0, -1.0,   0.25, 0.25, 0.75,
+    0.25, 0.25, 0.25,    0.25, 0.25, 0.75,
+    0.25, -0.25, 0.25,   0.25, 0.25, 0.75,
+    0.25, -0.25, -0.25,  0.25, 0.25, 0.75,
+    0.25, 0.25, -0.25,   0.25, 0.25, 0.75,
 
     // Front
-    1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
-    1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
-    -1.0, -1.0, 1.0,    1.0, 0.0, 0.15,
-    -1.0, 1.0, 1.0,    1.0, 0.0, 0.15,
+    0.25, 0.25, 0.25,    1.0, 0.0, 0.15,
+    0.25, -0.25, 0.25,    1.0, 0.0, 0.15,
+    -0.25, -0.25, 0.25,    1.0, 0.0, 0.15,
+    -0.25, 0.25, 0.25,    1.0, 0.0, 0.15,
 
     // Back
-    1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
-    1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
-    -1.0, -1.0, -1.0,    0.0, 1.0, 0.15,
-    -1.0, 1.0, -1.0,    0.0, 1.0, 0.15,
+    0.25, 0.25, -0.25,    0.0, 1.0, 0.15,
+    0.25, -0.25, -0.25,    0.0, 1.0, 0.15,
+    -0.25, -0.25, -0.25,    0.0, 1.0, 0.15,
+    -0.25, 0.25, -0.25,    0.0, 1.0, 0.15,
 
     // Bottom
-    -1.0, -1.0, -1.0,   0.5, 0.5, 1.0,
-    -1.0, -1.0, 1.0,    0.5, 0.5, 1.0,
-    1.0, -1.0, 1.0,     0.5, 0.5, 1.0,
-    1.0, -1.0, -1.0,    0.5, 0.5, 1.0,
+    -0.25, -0.25, -0.25,   0.5, 0.5,1.0,
+    -0.25, -0.25, 0.25,    0.5, 0.5, 1.0,
+    0.25, -0.25, 0.25,     0.5, 0.5, 1.0,
+    0.25, -0.25, -0.25,    0.5, 0.5, 1.0,
 ];
 
 var boxIndices =
@@ -213,6 +276,9 @@ var boxIndices =
     22, 20, 23
 ];
 
+var tranformMatrix = createMatrix('t', -5, 2.5, 0, null);
+boxVertices = tranformObject(boxVertices, tranformMatrix);
+
 var viewMatrix = new Float32Array(16);
 var worldMatrix = new Float32Array(16);
 var projMatrix = new Float32Array(16);
@@ -220,55 +286,89 @@ var testMatrix = new Float32Array(16);
 
 var identityMatrix = new Float32Array(16);
 glMatrix.mat4.identity(identityMatrix);
-var angle = Math.PI / 100;
 
 window.addEventListener('keypress', (event) => {
     if(event.key === '6') {
-        // angle += Math.PI / 100;
         var centroid = getCentroid(boxVertices);
 		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y');
         boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '2') {
-        // angle += Math.PI / 100;
         var centroid = getCentroid(boxVertices);
 		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x');
         boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '8') {
-        // angle += Math.PI / 100;
         var centroid = getCentroid(boxVertices);
 		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x', true);
         boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '4') {
-        // angle += Math.PI / 100;
-        glMatrix.mat4.rotate(xRotationMatrix, identityMatrix, angle, [0, -1, 0]);
-		glMatrix.mat4.mul(worldMatrix, xRotationMatrix, worldMatrix)
+        var centroid = getCentroid(boxVertices);
+        var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y', true);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '7') {
-        // angle += Math.PI / 100;
-        glMatrix.mat4.rotate(xRotationMatrix, identityMatrix, angle, [0, -1, 0]);
-        glMatrix.mat4.rotate(yRotationMatrix, identityMatrix, angle, [-1, 0, 0]);
-        glMatrix.mat4.mul(xRotationMatrix, xRotationMatrix, yRotationMatrix);
-		glMatrix.mat4.mul(worldMatrix, xRotationMatrix, worldMatrix)
+        var centroid = getCentroid(boxVertices);
+        var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x', true);
+        var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y', true);
+        var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '9') {
-        // angle += Math.PI / 100;
-        glMatrix.mat4.rotate(xRotationMatrix, identityMatrix, angle, [0, 1, 0]);
-        glMatrix.mat4.rotate(yRotationMatrix, identityMatrix, angle, [-1, 0, 0]);
-        glMatrix.mat4.mul(xRotationMatrix, xRotationMatrix, yRotationMatrix);
-		glMatrix.mat4.mul(worldMatrix, xRotationMatrix, worldMatrix)
+        var centroid = getCentroid(boxVertices);
+        var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x', true);
+        var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y');
+        var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '1') {
-        // angle += Math.PI / 100;
-        glMatrix.mat4.rotate(xRotationMatrix, identityMatrix, angle, [0, -1, 0]);
-        glMatrix.mat4.rotate(yRotationMatrix, identityMatrix, angle, [1, 0, 0]);
-        glMatrix.mat4.mul(xRotationMatrix, xRotationMatrix, yRotationMatrix);
-		glMatrix.mat4.mul(worldMatrix, xRotationMatrix, worldMatrix)
+        var centroid = getCentroid(boxVertices);
+        var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x');
+        var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y', true);
+        var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '3') {
-        // angle += Math.PI / 100;
-        glMatrix.mat4.rotate(xRotationMatrix, identityMatrix, angle, [0, 1, 0]);
-        glMatrix.mat4.rotate(yRotationMatrix, identityMatrix, angle, [1, 0, 0]);
-        glMatrix.mat4.mul(xRotationMatrix, xRotationMatrix, yRotationMatrix);
-		glMatrix.mat4.mul(worldMatrix, xRotationMatrix, worldMatrix)
+        var centroid = getCentroid(boxVertices);
+        var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x');
+        var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y');
+        var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === '5') {
-        // angle += Math.PI / 100;
-		glMatrix.mat4.identity(worldMatrix);
+		boxVertices = [ 
+            // X, Y, Z           R, G, B
+            // Top
+            -0.25, 0.25, -0.25,   0.5, 0.5, 0.5,
+            -0.25, 0.25, 0.25,    0.5, 0.5, 0.5,
+            0.25, 0.25, 0.25,     0.5, 0.5, 0.5,
+            0.25, 0.25, -0.25,    0.5, 0.5, 0.5,
+
+            // Left
+            -0.25, 0.25, 0.25,    0.75, 0.25, 0.5,
+            -0.25, -0.25, 0.25,   0.75, 0.25, 0.5,
+            -0.25, -0.25, -0.25,  0.75, 0.25, 0.5,
+            -0.25, 0.25, -0.25,   0.75, 0.25, 0.5,
+
+            // Right
+            0.25, 0.25, 0.25,    0.25, 0.25, 0.75,
+            0.25, -0.25, 0.25,   0.25, 0.25, 0.75,
+            0.25, -0.25, -0.25,  0.25, 0.25, 0.75,
+            0.25, 0.25, -0.25,   0.25, 0.25, 0.75,
+
+            // Front
+            0.25, 0.25, 0.25,    1.0, 0.0, 0.15,
+            0.25, -0.25, 0.25,    1.0, 0.0, 0.15,
+            -0.25, -0.25, 0.25,    1.0, 0.0, 0.15,
+            -0.25, 0.25, 0.25,    1.0, 0.0, 0.15,
+
+            // Back
+            0.25, 0.25, -0.25,    0.0, 1.0, 0.15,
+            0.25, -0.25, -0.25,    0.0, 1.0, 0.15,
+            -0.25, -0.25, -0.25,    0.0, 1.0, 0.15,
+            -0.25, 0.25, -0.25,    0.0, 1.0, 0.15,
+
+            // Bottom
+            -0.25, -0.25, -0.25,   0.5, 0.5,1.0,
+            -0.25, -0.25, 0.25,    0.5, 0.5, 1.0,
+            0.25, -0.25, 0.25,     0.5, 0.5, 1.0,
+            0.25, -0.25, -0.25,    0.5, 0.5, 1.0,
+        ];
+        var tranformMatrix = createMatrix('t', -5, 2.5, 0, null);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
     }else if(event.key === 'w') {
         var tranformMatrix = createMatrix('t', 0, 0.1, 0, null);
         boxVertices = tranformObject(boxVertices, tranformMatrix);
@@ -287,7 +387,15 @@ window.addEventListener('keypress', (event) => {
     }else if(event.key === 'e') {
         var tranformMatrix = createMatrix('t', 0, 0, 0.1, null);
         boxVertices = tranformObject(boxVertices, tranformMatrix);
-    } 
+    }else if(event.key === '+') {
+        var centroid = getCentroid(boxVertices);
+        var tranformMatrix = createMatrix('s', centroid[0], centroid[1], centroid[2], null, false);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
+    }else if(event.key === '-') {
+        var centroid = getCentroid(boxVertices);
+        var tranformMatrix = createMatrix('s', centroid[0], centroid[1], centroid[2], null, true);
+        boxVertices = tranformObject(boxVertices, tranformMatrix);
+    }
 })
 
 //Declarando os shaders em formato de string
@@ -325,7 +433,7 @@ var InitProject = function (){
     console.log("funcionou :)");
 
     var canvas = document.getElementById('main-canvas');
-    var gl = canvas.getContext('webgl2');
+    var gl = canvas.getContext('webgl2', { preserveDrawingBuffer: true });
 
     if(!gl) {
         gl = canvas.getContext('experimental-webgl');
