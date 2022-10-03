@@ -29,7 +29,7 @@ Para interagir com os objetos, temos os seguintes comandos: <br/>
 **Q/- : afasta o objeto da tela** <br/>
 
 Além disso, ao usar o *numpad* (ou os números do teclado), podemos rotacionar o objeto desejado: <br/>
-![numpad](https://user-images.githubusercontent.com/63080035/193505279-9949e797-5581-48ee-bed9-3e3f406fac50.png)
+![numpad2](https://user-images.githubusercontent.com/63080035/193506499-8236070e-f2bb-4fe1-acbe-959449a16a7e.png)
 
 **1 : rotaciona o objeto para baixo e para a esquerda** <br/>
 **2 : rotaciona o objeto para baixo, apenas no eixo Z** <br/>
