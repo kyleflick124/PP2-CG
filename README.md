@@ -16,6 +16,8 @@ No programa, é possível interagir com objetos no mundo individualmente, podend
 
 ## Modo de interação:
 
+Para acessar o programa, basta seguir o link https://kyleflick124.github.io/PP2-CG/ <br/>
+
 Em nosso programa, temos 3 objetos disponibilizados para interação no mundo, mas como temos um número limitado de inputs intuitivos no teclado, fizemos com que o usuário apenas possa interagir com um objeto por vez, alternando o objeto que está sendo usado ao **pressionar a tecla Enter**. <br/>
 
 Para interagir com os objetos, temos os seguintes comandos: <br/>
