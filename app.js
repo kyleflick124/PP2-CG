@@ -1,3 +1,7 @@
+//FUNCOES IMPLEMENTADAS PARA AUXILIAR NAS TRANSFORMACOES:
+
+//A funcao getCentroid calcula o centro do objeto dados seus vertices. Eh util para
+//executar as rotacoes nos objetos.
 function getCentroid(obj){
     var point = [0,0,0];
     // eixo x
@@ -18,6 +22,8 @@ function getCentroid(obj){
     return point;
 }
 
+//A funcao matrixMul realiza a multiplicacao de duas matrizes. Essa funcao ja existia em uma biblioteca,
+//mas decidimos implementa-la pois estavamos tendo alguns resultados estranhos com a funcao padrao.
 function matrixMul(a, b){
     var a00 = a[0 * 4 + 0];
     var a01 = a[0 * 4 + 1];
@@ -71,6 +77,8 @@ function matrixMul(a, b){
     ];
 }
 
+//A funcao pointMul realiza a multiplicacao de um ponto por uma matriz. Ela foi usada para realizar as
+//transformacoes em cada vertice do objeto.
 function pointMul(point, matrix){
     var m00 = matrix[0 * 4 + 0];
     var m01 = matrix[0 * 4 + 1];
@@ -96,6 +104,8 @@ function pointMul(point, matrix){
     ];
 }
 
+//A funcao createMatrix recebe as transformacoes que vao ser efetuadas, e cria uma matriz de transformacao,
+//retornando-a. Eh usada para criar as transformacoes vistas em aula.
 function createMatrix(type, transformX = null, transformY = null, transformZ = null, axisR = null, inverted = false){
     var matrix = new Float32Array(16);
     matrix = [
@@ -191,7 +201,8 @@ function createMatrix(type, transformX = null, transformY = null, transformZ = n
     return matrix;
 }
 
-function tranformObject(obj, matrix){
+//A funcao transformObject eh a funcao que chama a funcao pointMul para cada vertice do objeto, transformando-o.
+function transformObject(obj, matrix){
     var point = [];
     for(var i = 0; i < obj.length;){
         point = [
@@ -209,6 +220,9 @@ function tranformObject(obj, matrix){
     return obj;
 }
 
+//VARIAVEIS DE OBJETOS
+//A  variavel objectsVertices possui os vertices de todos os 3 objetos criados, juntamente
+//com sua cor RGB atribuida a cada vertice.
 var objectsVertices = [
     //Criando buffer dos vertices
     ['boxVertices', 
@@ -262,20 +276,22 @@ var objectsVertices = [
     [ // X, Y, Z           R, G, B
         1.2, 0.74, 0.0,    1.0, 0.0, 0.0,   //A 0
         1.2, -0.74, 0.0,   0.0, 0.0, 0.0,   //A' 1
-        -1.2, -0.74, 0.0,  0.0, 0.0, 0.0,   //A'' 2
-        -1.2, 0.74, 0.0,   0.0, 0.0, 0.0,   //A''' 3
+        -1.2, -0.74, 0.0,  1.0, 1.0, 0.0,   //A'' 2
+        -1.2, 0.74, 0.0,   1.0, 1.0, 1.0,   //A''' 3
 
         0.74, 0.0, 1.2,    0.0, 1.0, 0.0,   //B 4
         -0.74, 0.0, 1.2,   0.0, 0.0, 0.0,   //B' 5
-        -0.74, 0.0, -1.2,  0.0, 0.0, 0.0,   //B'' 6
-        0.74, 0.0, -1.2,   0.0, 0.0, 0.0,   //B''' 7
+        -0.74, 0.0, -1.2,  0.0, 1.0, 1.0,   //B'' 6
+        0.74, 0.0, -1.2,   1.0, 1.0, 1.0,   //B''' 7
 
         0.0, 1.2, 0.74,    0.0, 0.0, 1.0,   //C 8
-        0.0, -1.2, 0.74,   0.0, 0.0, 0.0,   //C' 9
-        0.0, -1.2, -0.74,  0.0, 0.0, 0.0,   //C'' 10
+        0.0, -1.2, 0.74,   1.0, 1.0, 1.0,   //C' 9
+        0.0, -1.2, -0.74,  1.0, 0.0, 1.0,   //C'' 10
         0.0, 1.2, -0.74,   0.0, 0.0, 0.0,   //C''' 11
     ]]];
 
+//A variavel objectsIndices possui os indices de cada vertice criado para o objeto, e forma os triangulos
+//que compoem o objeto.
 var objectsIndices = [
     ['boxIndices',
     [
@@ -354,79 +370,81 @@ var currentObjectIndexes = objectsIndices[0][1];
 var viewMatrix = new Float32Array(16);
 var worldMatrix = new Float32Array(16);
 var projMatrix = new Float32Array(16);
-var testMatrix = new Float32Array(16);
 
 var identityMatrix = new Float32Array(16);
 glMatrix.mat4.identity(identityMatrix);
 
+//INPUTS DO USUARIO:
+//Nessa parte, coletamos os inputs do usuario, gerando os eventos que causam as transformacoes no objeto
+//e tambem alternando entre objetos.
 var count = 1;
 window.addEventListener('keypress', (event) => {
     if(event.key === '6') {
         var centroid = getCentroid(currentObjectVertices);
 		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y');
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '2') {
         var centroid = getCentroid(currentObjectVertices);
 		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x');
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '8') {
         var centroid = getCentroid(currentObjectVertices);
 		var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x', true);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '4') {
         var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y', true);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '7') {
         var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x', true);
         var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y', true);
         var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '9') {
         var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x', true);
         var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y');
         var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '1') {
         var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x');
         var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y', true);
         var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '3') {
         var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix1 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'x');
         var tranformMatrix2 = createMatrix('r', centroid[0], centroid[1], centroid[2], 'y');
         var tranformMatrix = matrixMul(tranformMatrix1, tranformMatrix2);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 'w') {
         var tranformMatrix = createMatrix('t', 0, 0.1, 0, null);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 'a') {
         var tranformMatrix = createMatrix('t', -0.1, 0, 0, null);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 's') {
         var tranformMatrix = createMatrix('t', 0, -0.1, 0, null);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 'd') {
         var tranformMatrix = createMatrix('t', 0.1, 0, 0, null);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 'q') {
         var tranformMatrix = createMatrix('t', 0, 0, -0.1, null);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === 'e') {
         var tranformMatrix = createMatrix('t', 0, 0, 0.1, null);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '+') {
         var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix = createMatrix('s', centroid[0], centroid[1], centroid[2], null, false);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.key === '-') {
         var centroid = getCentroid(currentObjectVertices);
         var tranformMatrix = createMatrix('s', centroid[0], centroid[1], centroid[2], null, true);
-        currentObjectVertices = tranformObject(currentObjectVertices, tranformMatrix);
+        currentObjectVertices = transformObject(currentObjectVertices, tranformMatrix);
     }else if(event.keyCode === 13) {
         console.log(count % 3);
         currentObjectVertices = objectsVertices[count % 3][1];
@@ -480,11 +498,6 @@ var InitProject = function (){
         alert("Your browser does not support WebGL");
     }
 
-    //Ajustando o tamanho do canvas para a tela do usuario
-    // canvas.width = window.innerWidth;
-    // canvas.height = window.innerHeight;
-    // gl.viewport(0, 0, window.innerWidth, window.innerHeight);
-
     //limpando o contexto do webgl
     gl.clearColor(0.537, 0.812, 0.941, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -534,7 +547,7 @@ var InitProject = function (){
     var matViewUniformLocation = gl.getUniformLocation(program, "mView");
     var matProjUniformLocation = gl.getUniformLocation(program, "mProj");
 
-    //Criando as matrizes e setando seus valores para identidade (sem tranformação)
+    //Criando as matrizes do mundo, visao e perspectiva
     glMatrix.mat4.identity(worldMatrix);
     glMatrix.mat4.lookAt(viewMatrix, [0, 0, 8], [0, 0, 0], [0, 1, 0]);
     glMatrix.mat4.perspective(projMatrix, 45 * (Math.PI / 180), canvas.width / canvas.height, 0.1, 50.0);
@@ -548,6 +561,7 @@ var InitProject = function (){
     var loop = function(){
         gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 
+        //Criando os buffers para o objeto sendo renderizado no momento:
         var VertexBufferObject = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, VertexBufferObject);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currentObjectVertices), gl.STATIC_DRAW);
@@ -556,6 +570,7 @@ var InitProject = function (){
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, IndexBufferObject);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(currentObjectIndexes), gl.STATIC_DRAW);
         
+        //Criando os vetores de atributos a partir dos vertices do objeto e suas respectivas cores:
         var positionAttribLocation = gl.getAttribLocation(program, "vertPosition");
         var colorAttribLocation = gl.getAttribLocation(program, 'vertColor');
         gl.vertexAttribPointer(
@@ -576,14 +591,17 @@ var InitProject = function (){
             3 * Float32Array.BYTES_PER_ELEMENT //Offset from the beginning of a single vertex to this attribute
         );
 
-        //Habilitar os atributos declarados
+        //Habilitando os atributos declarados
         gl.enableVertexAttribArray(positionAttribLocation);
         gl.enableVertexAttribArray(colorAttribLocation);
     
+
+        //Criando o buffer de desenho
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currentObjectVertices), gl.STATIC_DRAW);
         gl.clearColor(0.537, 0.812, 0.941, 1.0);
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
+        //Desenhando elementos no canvas:
         gl.drawElements(gl.TRIANGLES, currentObjectIndexes.length, gl.UNSIGNED_SHORT, 0);
         requestAnimationFrame(loop);
     }
